@@ -3,17 +3,18 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"
 import myLocationList from './dataSource/location';
 import myApatmentList from './dataSource/apartment';
+import myAllTelList from './dataSource/allTelList';
 
 function App() {
 
-  const [building, setBuilding] = useState(0);  
   const [dataLocation, setDataLocation] = useState(myLocationList);
   const [dataApartment, setDataApartment] = useState(myApatmentList)
-  const [apartmentFilteredList, setApartmentFilteredList] = useState()
-
-  var myLocationSelected = "پدیدار"
 
   useEffect(() => {
+    
+    // setDataLocation(myLocationList.unshift({"Company": "همه موارد"}))
+    // setDataLocation
+    console.log ("apartmentSelected ----: " , dataLocation.length)
     // const dataFetch = async () => {
     //   const data = await (
     //     await fetch("./dataSource/apartment.json"));
@@ -22,33 +23,41 @@ function App() {
     // };
 
     // dataFetch();
-    const filter = dataApartment.filter((item) => item.Company === myLocationSelected);
-    setApartmentFilteredList(filter);
+    // const filtered = dataApartment.filter((item) => item.Company === myLocationSelected);
+    // setApartmentSelected(filtered);
 
-    console.log("my filter:", filter);
+  }, []);
 
-  }, [apartmentFilteredList]);
-
-   function filter () {
-
+  const filter = (event) => {
+    event.target.value === "همه موارد" ?
+    (setDataApartment(myApatmentList)) :
+    (setDataApartment(myApatmentList.filter(item => item.Company===event.target.value)))
+    console.log ("select 2: *****" , dataApartment)
   }
 
   return (
-    <div class="container mt-5" dir="rtl">
-      <div className='row' >
-      <select class="form-select mt-1" aria-label="Default select example" onChange={e => setApartmentFilteredList(e.target.value)}>
-        {dataLocation.map ((item, index) => <option key={index} value={item.Company}>{item.Company}</option>)}
-      </select>
-      <select class="form-select mt-1" aria-label="Default select example">
-        {dataApartment.map ((item, index) => <option key={index} value={item.Place}>{item.Company+"|"+item.Place}</option>)}
-      </select>
-      <button title="tester" class="btn btn-primary mt-1" 
-        onClick={() => {
-          alert("1");
-        }}
-      >
-        test
-      </button>
+    <div className="container mt-5" dir="rtl">
+      <div className='row-sm d-grid gap-2' >
+        <select className="form-select mt-1 col-sm" aria-label="Default select example" dir="rtl" onChange={(e) => {filter(e)}}>
+          <option key="-1" value="همه موارد">همه موارد</option>
+          {dataLocation.length === 0 ? 
+          (<option>1</option>)  : 
+          (
+            dataLocation.map((item, index) => <option key={index} value={item.Company}>{item.Company}</option>)
+          )}
+        </select>
+        <select className="form-select mt-1 col-sm" aria-label="Default select example">
+          {/* {dataApartment.map ((item, index) => <option key={index} value={item.Place}>{item.Company+"|"+item.Place}</option>)} */}
+          <option key="-1" value="همه موارد">همه موارد</option>
+          {dataApartment.map((item, index) => <option key={index} value={item.Place}>{item.Company + "|" + item.Place}</option>)}
+        </select>
+        <button title="tester" className="btn btn-primary col-default mt-1 col-sm"
+          onClick={() => {
+            alert(dataApartment);
+          }}
+        >
+          test
+        </button>
       </div>
     </div>
   );
