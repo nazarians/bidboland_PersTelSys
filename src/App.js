@@ -5,16 +5,19 @@ import myLocationList from './dataSource/location';
 import myApatmentList from './dataSource/apartment';
 import myAllTelList from './dataSource/allTelList';
 
+import TableSearch from './tableSearch';
+
 function App() {
 
   const [dataLocation, setDataLocation] = useState(myLocationList);
   const [dataApartment, setDataApartment] = useState(myApatmentList)
+  const [dataAllTelList, setDataAllTelList] = useState(myAllTelList)
 
   useEffect(() => {
-    
+
     // setDataLocation(myLocationList.unshift({"Company": "همه موارد"}))
     // setDataLocation
-    console.log ("apartmentSelected ----: " , dataLocation.length)
+    console.log("apartmentSelected ----: ", dataLocation.length)
     // const dataFetch = async () => {
     //   const data = await (
     //     await fetch("./dataSource/apartment.json"));
@@ -28,38 +31,51 @@ function App() {
 
   }, []);
 
-  const filter = (event) => {
+  const changeFirstSelect = (event) => {
     event.target.value === "همه موارد" ?
-    (setDataApartment(myApatmentList)) :
-    (setDataApartment(myApatmentList.filter(item => item.Company===event.target.value)))
-    console.log ("select 2: *****" , dataApartment)
+      (setDataApartment(myApatmentList)) :
+      (setDataApartment(myApatmentList.filter(item => item.Company === event.target.value)))
+    console.log("select 2: *****", dataApartment)
+  }
+
+  const changeSecondSelect = (event) => {
+    // event.target.value === "همه موارد" ?
+    //   (setDataApartment(myApatmentList)) :
+    //   (setDataApartment(myApatmentList.filter(item => item.Company === event.target.value)))
+    // console.log("select 2: *****", dataApartment)
   }
 
   return (
+
     <div className="container mt-5" dir="rtl">
-      <div className='row-sm d-grid gap-2' >
-        <select className="form-select mt-1 col-sm" aria-label="Default select example" dir="rtl" onChange={(e) => {filter(e)}}>
+      <div className='row-sm col-8 d-grid gap-2' >
+        <select className="form-select mt-1 col-8 col-sm" aria-label="Default select example" onChange={(e) => { changeFirstSelect(e) }}>
           <option key="-1" value="همه موارد">همه موارد</option>
-          {dataLocation.length === 0 ? 
-          (<option>1</option>)  : 
-          (
-            dataLocation.map((item, index) => <option key={index} value={item.Company}>{item.Company}</option>)
-          )}
+          {dataLocation.length === 0 ?
+            (<option>1</option>) :
+            (
+              dataLocation.map((item, index) => <option key={index} value={item.Company}>{item.Company}</option>)
+            )}
         </select>
-        <select className="form-select mt-1 col-sm" aria-label="Default select example">
+        <select className="form-select mt-1 col-8 col-sm" aria-label="Default select example" onChange={(e) => { changeSecondSelect(e) }}>
           {/* {dataApartment.map ((item, index) => <option key={index} value={item.Place}>{item.Company+"|"+item.Place}</option>)} */}
           <option key="-1" value="همه موارد">همه موارد</option>
           {dataApartment.map((item, index) => <option key={index} value={item.Place}>{item.Company + "|" + item.Place}</option>)}
         </select>
-        <button title="tester" className="btn btn-primary col-default mt-1 col-sm"
-          onClick={() => {
+        <button title="tester" className="btn btn-primary col-default mt-1 col-4 col-sm"
+          onClick={(e) => {
+            // filterTableData;
             alert(dataApartment);
           }}
         >
-          test
+          جستجو کن
         </button>
       </div>
+      <div className='row-sm'>
+        <TableSearch allList={dataAllTelList} />
+      </div>
     </div>
+
   );
 }
 
