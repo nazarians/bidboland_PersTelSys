@@ -9,36 +9,59 @@ import TableSearch from './tableSearch';
 
 function App() {
 
-  const [dataLocation, setDataLocation] = useState(myLocationList);
-  const [dataApartment, setDataApartment] = useState(myApatmentList)
+  const newLocationList = [{ "Company": "همه موارد" }, ...myLocationList]
+  const newApartmentList = [{ "Company": "همه موارد", "Place": "همه موارد" }, ...myApatmentList]
+  // console.log("locationSelected --++++--: ", myLocationList)
+  // console.log("locationSelected --++++--: ", newLocationList)
+
+  const [dataLocation, setDataLocation] = useState(newLocationList);
+  const [dataApartment, setDataApartment] = useState(newApartmentList)
   const [dataAllTelList, setDataAllTelList] = useState(myAllTelList)
+  const [select1Value, setSelect1Value] = useState("همه موارد")
+  const [select2Value, setSelect2Value] = useState("همه موارد")
 
   useEffect(() => {
+    console.log("select 111 value: >>>>>>>>", select1Value)
+    console.log("select 222 value: >>>>>>>>", select2Value)
+    var flag = "00"
+    select1Value === "همه موارد" ? flag = "0" : flag = "1"
+    select2Value === "همه موارد" ? flag = flag + "0" : flag = flag + "1"
 
-    // setDataLocation(myLocationList.unshift({"Company": "همه موارد"}))
-    // setDataLocation
-    console.log("apartmentSelected ----: ", dataLocation.length)
-    // const dataFetch = async () => {
-    //   const data = await (
-    //     await fetch("./dataSource/apartment.json"));
-    //   console.log("my data:", data);
-    //   setDataApartment(data);
-    // };
+    console.log("flag: 000000000000", flag)
 
-    // dataFetch();
-    // const filtered = dataApartment.filter((item) => item.Company === myLocationSelected);
-    // setApartmentSelected(filtered);
+    var newFilter
+    switch (flag) {
+      case "00":
+        newFilter = myAllTelList;
+        break;
+      case "01":
+        newFilter = myAllTelList.filter(item => (item.Place === select2Value))
+        break;
+      case "10":
+        newFilter = myAllTelList.filter(item => (item.Company === select1Value))
+        break;
+      case "11":
+        newFilter = myAllTelList.filter(item => (item.Company === select1Value && item.Place === select2Value))
+        break;
+      // default:
+      //   break;
+    }
+    console.log("newFilter: xxxxxxxxxxxxx", newFilter)
 
-  }, []);
+    setDataAllTelList(newFilter)
+
+  }, [select1Value, select2Value]);
 
   const changeFirstSelect = (event) => {
+    setSelect1Value(event.target.value)
+    setSelect2Value("همه موارد");
     event.target.value === "همه موارد" ?
-      (setDataApartment(myApatmentList)) :
-      (setDataApartment(myApatmentList.filter(item => item.Company === event.target.value)))
-    console.log("select 2: *****", dataApartment)
+      (setDataApartment(newApartmentList)) :
+      (setDataApartment(newApartmentList.filter(item => (item.Company === (event.target.value) || item.Company === "همه موارد"))))
   }
 
   const changeSecondSelect = (event) => {
+    setSelect2Value(event.target.value)
     // event.target.value === "همه موارد" ?
     //   (setDataApartment(myApatmentList)) :
     //   (setDataApartment(myApatmentList.filter(item => item.Company === event.target.value)))
@@ -49,18 +72,21 @@ function App() {
 
     <div className="container mt-5" dir="rtl">
       <div className='row-sm col-8 d-grid gap-2' >
-        <select className="form-select mt-1 col-8 col-sm" aria-label="Default select example" onChange={(e) => { changeFirstSelect(e) }}>
-          <option key="-1" value="همه موارد">همه موارد</option>
+        <select className="form-select mt-1 col-8 col-sm" aria-label="Default select example" defaultValue={select1Value} onChange={(e) => { changeFirstSelect(e) }}>
           {dataLocation.length === 0 ?
             (<option>1</option>) :
             (
-              dataLocation.map((item, index) => <option key={index} value={item.Company}>{item.Company}</option>)
+              dataLocation.map((item, index) =>
+                <option key={index} value={item.Company}>
+                  {item.Company}
+                </option>)
             )}
         </select>
-        <select className="form-select mt-1 col-8 col-sm" aria-label="Default select example" onChange={(e) => { changeSecondSelect(e) }}>
-          {/* {dataApartment.map ((item, index) => <option key={index} value={item.Place}>{item.Company+"|"+item.Place}</option>)} */}
-          <option key="-1" value="همه موارد">همه موارد</option>
-          {dataApartment.map((item, index) => <option key={index} value={item.Place}>{item.Company + "|" + item.Place}</option>)}
+        <select className="form-select mt-1 col-8 col-sm" aria-label="Default select example" value={select2Value} onChange={(e) => { changeSecondSelect(e) }}>
+          {dataApartment.map((item, index) =>
+            <option key={index} value={item.Place}>
+              {item.Place === "همه موارد" ? "همه موارد" : item.Company + "|" + item.Place}
+            </option>)}
         </select>
         <button title="tester" className="btn btn-primary col-default mt-1 col-4 col-sm"
           onClick={(e) => {
